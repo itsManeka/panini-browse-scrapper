@@ -3,6 +3,7 @@ const axios = require('axios');
 
 const reValorReais = new RegExp('R\\$([0-9,.]+)');
 const reImagem = new RegExp('og\:image\" content\=\"(https?\:\/\/.+\.cloudfront\.net\/image\/.+FWEBP)\" \/>');
+const reImagem2 = new RegExp('og\:image\" content\=\"(https?\:\/\/.+\.jpg)');
 
 class Browser {
     constructor() {
@@ -39,7 +40,7 @@ class Browser {
         try {
             const result = this.page(selector);
             if (result) {
-                retorno = result.text().trim(); 
+                retorno = result.first().text().trim(); 
             }
         } catch (err) {
             console.log(`erro ao buscar o item de selector ${selector}. Erro: ${err.message}`)
@@ -111,9 +112,23 @@ class Browser {
     }
 
     async encontraLinkImagem(json, campo) {
-        const retorno = this.html.match(reImagem);
+        var imagem = "";
+        var encontrou = false;
+
+        var retorno = this.html.match(reImagem);
         if (retorno) {
-            json[campo] = retorno[1];
+            imagem = retorno[1];
+            encontrou = true;
+        } else {
+            retorno = this.html.match(reImagem2);
+            if (retorno) {
+                imagem = retorno[1];
+                encontrou = true;
+            }
+        }
+
+        if (encontrou) {
+            json[campo] = imagem;
         }
     }
     
