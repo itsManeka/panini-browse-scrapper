@@ -4,6 +4,7 @@ const axios = require('axios');
 const reValorReais = new RegExp('R\\$([0-9,.]+)');
 const reImagem = new RegExp('og\:image\" content\=\"(https?\:\/\/.+\.cloudfront\.net\/image\/.+FWEBP)\" \/>');
 const reImagem2 = new RegExp('og\:image\" content\=\"(https?\:\/\/.+\.jpg)');
+const reImagem3 = new RegExp('full\"\:\"(https?\:.+\.cloudfront\.net.+FWEBP)');
 
 class Browser {
     constructor() {
@@ -103,7 +104,7 @@ class Browser {
     async leExisteEstoque(json) {
         const retorno = await this.getItemByClass('stock');
         if (retorno) {
-            if (retorno.includes('Produto Indisponível')) {
+            if (retorno.includes('Produto Indisponível') || retorno.includes('Fora de estoque')) {
                 json['estoque'] = false;
                 return;
             }
@@ -119,10 +120,21 @@ class Browser {
         if (retorno) {
             imagem = retorno[1];
             encontrou = true;
-        } else {
+        }
+
+        if (!encontrou) {
             retorno = this.html.match(reImagem2);
             if (retorno) {
                 imagem = retorno[1];
+                encontrou = true;
+            }
+        }
+
+        if (!encontrou) {
+            retorno = this.html.match(reImagem3);
+            if (retorno) {
+                imagem = retorno[1];
+                imagem = imagem.replace(/\\/gi, "");
                 encontrou = true;
             }
         }
