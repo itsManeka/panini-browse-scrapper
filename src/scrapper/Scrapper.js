@@ -166,7 +166,7 @@ class Browser {
             
             retorno['link'] = url;
         } catch (err) {
-            console.log(`Erro ao ler página: ${err.message}`);
+            console.log(`Erro ao ler página (${url}): ${err.message}`);
             return undefined;
         }
     
