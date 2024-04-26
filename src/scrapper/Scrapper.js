@@ -3,8 +3,9 @@ const axios = require('axios');
 
 const reValorReais = new RegExp('R\\$([0-9,.]+)');
 const reImagem = new RegExp('og\:image\" content\=\"(https?\:\/\/.+\.cloudfront\.net\/image\/.+FWEBP)\" \/>');
-const reImagem2 = new RegExp('og\:image\" content\=\"(https?\:\/\/.+\.jpg)');
+const reImagem2 = new RegExp('og\:image\" content\=\"(https?\:\/\/.+\.(jpg|png))');
 const reImagem3 = new RegExp('full\"\:\"(https?\:.+\.cloudfront\.net.+FWEBP)');
+const reImagemExtra = new RegExp('(https:\/\/panini\.com\.br\/media\/catalog\/product\/[\S]\/[\S]\/[\S]+\.[a-z]{3})');
 
 class Browser {
     constructor() {
@@ -139,8 +140,31 @@ class Browser {
             }
         }
 
+        if (!encontrou) {
+            retorno = this.html.match(reImagemExtra);
+            if (retorno) {
+                imagem = retorno[1];
+                encontrou = true;
+            }
+        }
+
         if (encontrou) {
             json[campo] = imagem;
+        }
+    }
+
+    async encontraLinkImagemExtra(json) {
+        var imagem = "";
+        var encontrou = false;
+
+        var retorno = this.html.match(reImagemExtra);
+        if (retorno) {
+            imagem = retorno[1];
+            encontrou = true;
+        }
+
+        if (encontrou) {
+            json["imagemExtra"] = imagem;
         }
     }
     
@@ -154,6 +178,7 @@ class Browser {
             await this.leCampoPartialId(retorno, 'preco', 'span', 'product-price', true);
             await this.leCampoPartialId(retorno, 'precoCapa', 'span', 'old-price', true);
             await this.encontraLinkImagem(retorno, 'imagem');
+            await this.encontraLinkImagemExtra(retorno);
             await this.leExisteEstoque(retorno);
             await this.leCampoDetalhe(retorno, 'referencia', 'Referência');
             await this.leCampoDetalheSplit(retorno, 'autores', 'Autores', ', ');
