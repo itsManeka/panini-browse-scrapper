@@ -5,7 +5,7 @@ const reValorReais = new RegExp('R\\$([0-9,.]+)');
 const reImagem = new RegExp('og\:image\" content\=\"(https?\:\/\/.+\.cloudfront\.net\/image\/.+FWEBP)\" \/>');
 const reImagem2 = new RegExp('og\:image\" content\=\"(https?\:\/\/.+\.(jpg|png))');
 const reImagem3 = new RegExp('full\"\:\"(https?\:.+\.cloudfront\.net.+FWEBP)');
-const reImagemExtra = new RegExp('(https:\/\/panini\.com\.br\/media\/catalog\/product\/[\S]\/[\S]\/[\S]+\.[a-z]{3})');
+const reImagemExtra = new RegExp('(https:\/\/panini\.com\.br\/media\/catalog\/product\/[\\S]\/[\\S]\/[\\S]+\.[a-z]{3})');
 
 class Browser {
     constructor() {
